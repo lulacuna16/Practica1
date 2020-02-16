@@ -1,5 +1,5 @@
 # Numero de dias vividos 8023
-
+from random import randint, uniform,random
 """def practica(i):
     switcher={
         0: 'Buscaminas\n',
@@ -13,6 +13,8 @@ print ("Toca realizar el ejercicio ",dias%3,": ", practica(dias%3))  """
 
 # REALIZAR GATO DUMMY
 #CREANDO MATRIZ
+
+
 def matrizP(): #Tablero Principiante
     filas=["1","2","3"];
     columnas=["A","B","C"];
@@ -37,10 +39,9 @@ def matrizA(): #Tablero avanzado
             matriz[i].append(" ")
     return generarMatrizInicial(matriz,filas,columnas)
 
-#GENERAR LINEAS DEL PRIMER CUADRANTE
 def generarMatrizInicial(matriz,filas,columnas):
-    print("alto=", len(matriz))
-    print("largo=", len(matriz[0]))
+    #print("alto=", len(matriz))
+    #print("largo=", len(matriz[0]))
     for i in range(len(matriz)):  # ALTO
         for j in range(len(matriz[0])):  # LARGO
             if i is 0:
@@ -63,5 +64,96 @@ def verMatriz(matriz):
         for j in range(largo):  # LARGO
             print(matriz[i][j], "\t", end=" ")
         print()
-matriz1=matrizA()
-verMatriz(matriz1)
+def menu():
+    Salir=False
+    while  Salir==False :
+        print("\tElige una dificultad\t")
+        print("1. Principiante")
+        print("2. Avanzado")
+        print("3. Salir")
+        case=int(input("Opcion: "))
+        if case == 1:
+            matrizp=matrizP()
+            verMatriz(matrizp)
+            jugar(matrizp)
+        if case == 2:
+            matriza=matrizA()
+            verMatriz(matriza)
+            jugar(matriza)
+        if case == 3:
+            Salir = True
+
+def colocar(matriz,sim):
+    cont=0
+    while cont==0:
+        pos = str(input("Ingrese una coordenada (Ej. 1A,2C): "))
+        fila = int(pos[0])
+        col = ord(pos[1]) - 64
+        print(fila, ",", col)
+        for i in range (len(matriz)):
+            if i==fila:
+                for j in range (len(matriz[0])):
+                    if j==col:
+                        if matriz[i][j]=="-":
+                            matriz[i][j]=sim
+                            cont+=1
+                            verMatriz(matriz)
+                        else:
+                            print("Casilla Ocupada")
+
+                    elif col<=0 or col>=len(matriz[0]):
+                        print("Columna Invalida")
+                        break;
+            elif fila <= 0 or fila >= len(matriz):
+                print("Fila Invalida")
+                break;
+def juegoAuto(matriz,sim):
+    cont=0
+    while cont==0:
+        fila = randint(1,len(matriz)-1)
+        col = randint(65,65+(len(matriz)-2))-64#COdigo ascii desde A hasta el tamaño de la matriz
+        #print("Elegi Casilla:", fila, ",", col)
+        for i in range (len(matriz)):
+            if i==fila:
+                for j in range (len(matriz[0])):
+                    if j==col:
+                        if matriz[i][j]=="-":
+                            print("Elegi Casilla:",fila,",",col)
+                            matriz[i][j]=sim
+                            cont+=1
+                            verMatriz(matriz)
+                        #else:
+                            #print("Casilla Ocupada")
+
+                    elif col<=0 or col>=len(matriz[0]):
+                        #print("Columna Invalida")
+                        break;
+            elif fila <= 0 or fila >= len(matriz):
+                #print("Fila Invalida")
+                break;
+
+
+def jugar(matriz):
+    simJ="x"
+    simS="o"
+    cont=0
+    print("Jugador es: ", simJ)
+    print("Maquina es: ", simS)
+    long=(len(matriz)-1)*(len(matriz)-1)
+    while cont<long:
+        print("TURNO JUGADOR\n")
+        colocar(matriz,simJ)
+        cont+=1;
+        if cont>=long:
+            break
+        print("TURNO MAQUINA\n")
+        juegoAuto(matriz,simS)
+        cont+=1
+        if cont>=long:
+            break
+
+    print("Juego Terminado")
+menu()
+   ## return switch.get(case, "Dificultad no establecida\n")
+
+
