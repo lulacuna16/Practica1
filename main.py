@@ -1,5 +1,7 @@
 # Numero de dias vividos 8023
-from random import randint, uniform,random
+from random import randint
+from time import time
+import socket
 """def practica(i):
     switcher={
         0: 'Buscaminas\n',
@@ -64,61 +66,42 @@ def verMatriz(matriz):
         for j in range(largo):  # LARGO
             print(matriz[i][j], "\t", end=" ")
         print()
-def menu():
+def menu(case):
     Salir=False
     while  Salir==False :
         print("\tElige una dificultad\t")
         print("1. Principiante")
         print("2. Avanzado")
         print("3. Salir")
-        case=int(input("Opcion: "))
         if case == 1:
             matrizp=matrizP()
             verMatriz(matrizp)
-            jugar(matrizp)
+            jugar(matrizp,Client_conn)
         if case == 2:
             matriza=matrizA()
             verMatriz(matriza)
-            jugar(matriza)
+            jugar(matriza,Client_conn)
         if case == 3:
             Salir = True
 
-def colocar(matriz,sim):
-    cont=0
-    while cont==0:
-        pos = str(input("Ingrese una coordenada (Ej. 1A,2C): "))
-        fila = int(pos[0])
-        col = ord(pos[1]) - 64
-        #print(fila, ",", col)
-        for i in range (len(matriz)):
-            if i==fila:
-                for j in range (len(matriz[0])):
-                    if j==col:
-                        if matriz[i][j]=="-":
-                            matriz[i][j]=sim
-                            cont+=1
-                            verMatriz(matriz)
-                        else:
-                            print("Casilla Ocupada")
-
-                    elif col<=0 or col>=len(matriz[0]):
-                        print("Columna Invalida")
-                        break;
-            elif fila <= 0 or fila >= len(matriz):
-                print("Fila Invalida")
-                break;
-def juegoAuto(matriz,sim):
+def colocar(matriz,sim,Client_conn):
+    pos=str(Client_conn.recv(buffer_size),"ascii")
+    print(pos)
+    fila = int(pos[0])
+    col = ord(pos[1]) - 64
+    matriz[int(fila)][int(col)]=sim
+def juegoAuto(matriz,sim,Client_conn):
     cont=0
     while cont==0:
         fila = randint(1,len(matriz)-1)
         col = randint(65,65+(len(matriz)-2))-64#COdigo ascii desde A hasta el tamaño de la matriz
-        #print("Elegi Casilla:", fila, ",", col)
+
         for i in range (len(matriz)):
             if i==fila:
                 for j in range (len(matriz[0])):
                     if j==col:
                         if matriz[i][j]=="-":
-                            print("Elegi Casilla:",fila,",",col)
+                            msg="Elegi Casilla: "+str(fila)+(chr(col+64))
                             matriz[i][j]=sim
                             cont+=1
                             verMatriz(matriz)
@@ -131,6 +114,9 @@ def juegoAuto(matriz,sim):
             elif fila <= 0 or fila >= len(matriz):
                 #print("Fila Invalida")
                 break;
+    pos=str(fila)+(chr(col+64))
+    Client_conn.sendall(pos.encode())
+    Client_conn.sendall(msg.encode())
 
 def ganarH(matriz,sim):
     cont=0
@@ -152,16 +138,18 @@ def ganarV(matriz,sim):
                 if cont is (len(matriz)-1):
                     return 1
                     break;
-def jugar(matriz):
+def jugar(matriz,Client_conn):
     simJ="x"
     simS="o"
     cont=0
     print("Jugador es: ", simJ)
     print("Maquina es: ", simS)
     long=(len(matriz)-1)*(len(matriz)-1)
+    inicio=time()
     while cont<long:
         print("TURNO JUGADOR\n")
-        colocar(matriz,simJ)
+        colocar(matriz,simJ,Client_conn)
+        verMatriz(matriz)
         if ganarH(matriz,simJ) is 1:
             print("Gano JUGADOR")
             break;
@@ -173,7 +161,7 @@ def jugar(matriz):
             print("Juego Terminado: EMPATE")
             break
         print("TURNO MAQUINA\n")
-        juegoAuto(matriz,simS)
+        juegoAuto(matriz,simS, Client_conn)
         if ganarH(matriz,simS) is 1:
             print("Gano MAQUINA")
             break;
@@ -184,9 +172,27 @@ def jugar(matriz):
         if cont>=long:
             print("Juego Terminado: EMPATE")
             break
+    final=time()
+    print("Duracion de la partida %.2f segundos" %(final-inicio))
 
 
-menu()
-   ## return switch.get(case, "Dificultad no establecida\n")
+HOST = "127.0.0.1"  # Standard loopback interface address (localhost)
+PORT = 65432  # Port to listen on (non-privileged ports are > 1023)
+buffer_size = 1024
 
+with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as TCPServerSocket:
+    TCPServerSocket.bind((HOST, PORT))
+    TCPServerSocket.listen()
+    print("El servidor TCP está disponible y en espera de solicitudes")
+
+    Client_conn, Client_addr = TCPServerSocket.accept()
+    with Client_conn:
+        print("Conectado a", Client_addr)
+        while True:
+            case = int.from_bytes(Client_conn.recv(buffer_size), 'little')
+            menu(case)
+
+            if False:
+                Client_conn.sendall(b"Adios")
+                break
 
