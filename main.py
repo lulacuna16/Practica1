@@ -89,7 +89,7 @@ def colocar(matriz,sim):
         pos = str(input("Ingrese una coordenada (Ej. 1A,2C): "))
         fila = int(pos[0])
         col = ord(pos[1]) - 64
-        print(fila, ",", col)
+        #print(fila, ",", col)
         for i in range (len(matriz)):
             if i==fila:
                 for j in range (len(matriz[0])):
@@ -132,7 +132,26 @@ def juegoAuto(matriz,sim):
                 #print("Fila Invalida")
                 break;
 
-
+def ganarH(matriz,sim):
+    cont=0
+    for i in range (1,len(matriz)):
+        cont=0
+        for j in range(1,len(matriz[0])):
+            if matriz[i][j]==sim:
+                cont+=1
+                if cont is (len(matriz)-1):
+                    return 1
+                    break;
+def ganarV(matriz,sim):
+    cont=0
+    for j in range (1,len(matriz[0])):
+        cont=0
+        for i in range(1,len(matriz)):
+            if matriz[i][j]==sim:
+                cont+=1
+                if cont is (len(matriz)-1):
+                    return 1
+                    break;
 def jugar(matriz):
     simJ="x"
     simS="o"
@@ -143,16 +162,30 @@ def jugar(matriz):
     while cont<long:
         print("TURNO JUGADOR\n")
         colocar(matriz,simJ)
+        if ganarH(matriz,simJ) is 1:
+            print("Gano JUGADOR")
+            break;
+        if ganarV(matriz, simJ) is 1:
+            print("Gano JUGADOR")
+            break;
         cont+=1;
         if cont>=long:
+            print("Juego Terminado: EMPATE")
             break
         print("TURNO MAQUINA\n")
         juegoAuto(matriz,simS)
+        if ganarH(matriz,simS) is 1:
+            print("Gano MAQUINA")
+            break;
+        if ganarV(matriz, simS) is 1:
+            print("Gano MAQUINA")
+            break;
         cont+=1
         if cont>=long:
+            print("Juego Terminado: EMPATE")
             break
 
-    print("Juego Terminado")
+
 menu()
    ## return switch.get(case, "Dificultad no establecida\n")
 
