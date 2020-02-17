@@ -67,8 +67,6 @@ def verMatriz(matriz):
             print(matriz[i][j], "\t", end=" ")
         print()
 def menu(case):
-    Salir=False
-    while  Salir==False :
         print("\tElige una dificultad\t")
         print("1. Principiante")
         print("2. Avanzado")
@@ -77,12 +75,13 @@ def menu(case):
             matrizp=matrizP()
             verMatriz(matrizp)
             jugar(matrizp,Client_conn)
+            exit(0)
         if case == 2:
             matriza=matrizA()
             verMatriz(matriza)
             jugar(matriza,Client_conn)
-        if case == 3:
-            Salir = True
+            exit(0)
+
 
 def colocar(matriz,sim,Client_conn):
     pos=str(Client_conn.recv(buffer_size),"ascii")
