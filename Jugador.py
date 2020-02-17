@@ -50,8 +50,7 @@ def verMatriz(matriz):
             print(matriz[i][j], "\t", end=" ")
         print()
 def menu(TCPClientSocket):
-    Salir=False
-    while  Salir==False :
+
         print("\tElige una dificultad\t")
         print("1. Principiante")
         print("2. Avanzado")
@@ -67,8 +66,7 @@ def menu(TCPClientSocket):
             matriza=matrizA()
             verMatriz(matriza)
             jugar(matriza,TCPClientSocket)
-        if case == 3:
-            Salir = True
+
 
 def colocar(matriz,sim,TCPClientSocket):
     cont=0
