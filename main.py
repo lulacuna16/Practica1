@@ -70,7 +70,6 @@ def menu(case):
         print("\tElige una dificultad\t")
         print("1. Principiante")
         print("2. Avanzado")
-        print("3. Salir")
         if case == 1:
             matrizp=matrizP()
             verMatriz(matrizp)

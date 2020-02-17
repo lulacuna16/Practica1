@@ -54,7 +54,6 @@ def menu(TCPClientSocket):
         print("\tElige una dificultad\t")
         print("1. Principiante")
         print("2. Avanzado")
-        print("3. Salir")
         case=int(input("Opcion: "))
         caseb = case.to_bytes(1, 'little')
         TCPClientSocket.sendall(caseb)
